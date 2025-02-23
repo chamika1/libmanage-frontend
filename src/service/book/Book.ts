@@ -34,3 +34,21 @@ export const DeleteBook = async (bookId: string) => {
     }
 }
 
+export const UpdateBook = async (bookId: string, book: any) => {
+    try {
+        const response = await axios.patch(`${BASE_URL}?bookId=${bookId}`, book);
+        if (response.status === 204) {
+            console.log("Book updated successfully");
+            return true;
+        }
+        return false;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('Error updating book:', error.response?.data || error.message);
+        } else {
+            console.error('Error updating book:', error);
+        }
+        throw error;
+    }
+}
+

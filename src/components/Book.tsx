@@ -1,7 +1,7 @@
 import Table from 'react-bootstrap/Table';
 import './Book.css';
 import { useEffect,useState } from 'react';
-import { GetBook, DeleteBook } from '../service/book/Book';
+import { GetBook, DeleteBook, UpdateBook } from '../service/book/Book';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
@@ -51,63 +51,37 @@ export const Book = ()=>{
     const [books, setBooks] = useState<Book[]>([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [bookToDelete, setBookToDelete] = useState<string | null>(null);
-    const [editingBookId, setEditingBookId] = useState<string | null>(null);
-    const [editedBook, setEditedBook] = useState<Book | null>(null);
+    const [editingBook, setEditingBook] = useState<Book | null>(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showAlertModal, setShowAlertModal] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState<'success' | 'error'>('success');
 
-    const handleEdit = (book: Book) => {
-        setEditingBookId(book.bookId);
-        setEditedBook({...book});
+    const handleEditClick = (book: Book) => {
+        setEditingBook({ ...book });
+        setShowEditModal(true);
     };
 
-    const handleCancelEdit = () => {
-        setEditingBookId(null);
-        setEditedBook(null);
-    };
-
-    const handleSaveEdit = async () => {
-        if (editedBook) {
-            // TODO: Implement save functionality
-            console.log("Saving edited book:", editedBook);
-            setEditingBookId(null);
-            setEditedBook(null);
-        }
-    };
-
-    const handleInputChange = (field: keyof Book, value: string | number) => {
-        if (editedBook) {
-            setEditedBook({
-                ...editedBook,
+    const handleEditChange = (field: keyof Book, value: any) => {
+        if (editingBook) {
+            setEditingBook({
+                ...editingBook,
                 [field]: value
             });
         }
     };
 
-    const renderTableCell = (book: Book, field: keyof Book) => {
-        if (editingBookId === book.bookId && field !== 'bookId') {
-            const value = editedBook ? editedBook[field] : book[field];
-            
-            if (field === 'price' || field === 'totalQty' || field === 'avilableQty') {
-                return (
-                    <Form.Control
-                        type="number"
-                        value={value || ''}
-                        onChange={(e) => handleInputChange(field, Number(e.target.value))}
-                        size="sm"
-                    />
-                );
-            }
-            
-            return (
-                <Form.Control
-                    type="text"
-                    value={value || ''}
-                    onChange={(e) => handleInputChange(field, e.target.value)}
-                    size="sm"
-                />
-            );
+    const handleEditSave = async () => {
+        if (editingBook) {
+            setShowEditModal(false);  // Hide edit form first
+            setShowConfirmModal(true); // Then show confirmation modal
         }
-        
-        return book[field] || '-';
+    };
+
+    const handleEditCancel = () => {
+        setShowEditModal(false);
+        setEditingBook(null);
     };
 
     const handleDeleteClick = (bookId: string) => {
@@ -138,6 +112,31 @@ export const Book = ()=>{
         setBookToDelete(null);
     };
 
+    const handleConfirmEdit = async () => {
+        try {
+            const success = await UpdateBook(editingBook!.bookId, editingBook);
+            if (success) {
+                setBooks(books.map(book => 
+                    book.bookId === editingBook!.bookId ? editingBook! : book
+                ));
+                setEditingBook(null);
+                setAlertType('success');
+                setAlertMessage('Book updated successfully!');
+                setShowAlertModal(true);
+            } else {
+                setAlertType('error');
+                setAlertMessage('Failed to update book. Please try again.');
+                setShowAlertModal(true);
+            }
+        } catch (error) {
+            console.error('Error updating book:', error);
+            setAlertType('error');
+            setAlertMessage('Failed to update book. Please try again.');
+            setShowAlertModal(true);
+        }
+        setShowConfirmModal(false);
+    };
+
      return(
          <>
          <div className="table-wrapper">
@@ -153,62 +152,124 @@ export const Book = ()=>{
                     {books.map((book) => (
                         <tr key={book.bookId}>
                             <td>{book.bookId}</td>
-                            <td>{renderTableCell(book, 'title')}</td>
-                            <td>{renderTableCell(book, 'publisher')}</td>
-                            <td>{renderTableCell(book, 'isbn')}</td>
-                            <td>{renderTableCell(book, 'author')}</td>
-                            <td>{renderTableCell(book, 'edition')}</td>
-                            <td>{renderTableCell(book, 'price')}</td>
-                            <td>{renderTableCell(book, 'totalQty')}</td>
-                            <td>{renderTableCell(book, 'avilableQty')}</td>
-                            <td>{renderTableCell(book, 'lastUpdatedDate')}</td>
-                            <td>{renderTableCell(book, 'lastUpdatedTime')}</td>
+                            <td>{book.title || '-'}</td>
+                            <td>{book.publisher}</td>
+                            <td>{book.isbn}</td>
+                            <td>{book.author}</td>
+                            <td>{book.edition}</td>
+                            <td>{book.price || '-'}</td>
+                            <td>{book.totalQty}</td>
+                            <td>{book.avilableQty}</td>
+                            <td>{book.lastUpdatedDate}</td>
+                            <td>{book.lastUpdatedTime}</td>
                             <td>
-                                {editingBookId === book.bookId ? (
-                                    <>
-                                        <Button 
-                                            variant="success" 
-                                            size="sm" 
-                                            className="edit-btn"
-                                            onClick={handleSaveEdit}
-                                        >
-                                            Save
-                                        </Button>
-                                        <Button 
-                                            variant="secondary" 
-                                            size="sm"
-                                            className="delete-btn"
-                                            onClick={handleCancelEdit}
-                                        >
-                                            Cancel
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Button 
-                                            variant="outline-primary" 
-                                            size="sm" 
-                                            className="edit-btn"
-                                            onClick={() => handleEdit(book)}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button 
-                                            variant="outline-danger" 
-                                            size="sm"
-                                            className="delete-btn"
-                                            onClick={() => handleDeleteClick(book.bookId)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </>
-                                )}
+                                <Button 
+                                    variant="outline-primary" 
+                                    size="sm" 
+                                    className="edit-btn"
+                                    onClick={() => handleEditClick(book)}
+                                >
+                                    Edit
+                                </Button>
+                                <Button 
+                                    variant="outline-danger" 
+                                    size="sm"
+                                    className="delete-btn"
+                                    onClick={() => handleDeleteClick(book.bookId)}
+                                >
+                                    Delete
+                                </Button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </Table>
          </div>
+
+         {/* Edit Modal */}
+         <Modal show={showEditModal} onHide={handleEditCancel}>
+             <Modal.Header closeButton>
+                 <Modal.Title>Edit Book</Modal.Title>
+             </Modal.Header>
+             <Modal.Body>
+                 {editingBook && (
+                     <Form>
+                         <Form.Group className="mb-3">
+                             <Form.Label>Title</Form.Label>
+                             <Form.Control
+                                 type="text"
+                                 value={editingBook.title || ''}
+                                 onChange={(e) => handleEditChange('title', e.target.value)}
+                             />
+                         </Form.Group>
+                         <Form.Group className="mb-3">
+                             <Form.Label>Publisher</Form.Label>
+                             <Form.Control
+                                 type="text"
+                                 value={editingBook.publisher}
+                                 onChange={(e) => handleEditChange('publisher', e.target.value)}
+                             />
+                         </Form.Group>
+                         <Form.Group className="mb-3">
+                             <Form.Label>ISBN</Form.Label>
+                             <Form.Control
+                                 type="text"
+                                 value={editingBook.isbn}
+                                 onChange={(e) => handleEditChange('isbn', e.target.value)}
+                             />
+                         </Form.Group>
+                         <Form.Group className="mb-3">
+                             <Form.Label>Author</Form.Label>
+                             <Form.Control
+                                 type="text"
+                                 value={editingBook.author}
+                                 onChange={(e) => handleEditChange('author', e.target.value)}
+                             />
+                         </Form.Group>
+                         <Form.Group className="mb-3">
+                             <Form.Label>Edition</Form.Label>
+                             <Form.Control
+                                 type="text"
+                                 value={editingBook.edition}
+                                 onChange={(e) => handleEditChange('edition', e.target.value)}
+                             />
+                         </Form.Group>
+                         <Form.Group className="mb-3">
+                             <Form.Label>Price</Form.Label>
+                             <Form.Control
+                                 type="number"
+                                 value={editingBook.price || ''}
+                                 onChange={(e) => handleEditChange('price', Number(e.target.value))}
+                             />
+                         </Form.Group>
+                         <Form.Group className="mb-3">
+                             <Form.Label>Total Quantity</Form.Label>
+                             <Form.Control
+                                 type="number"
+                                 value={editingBook.totalQty}
+                                 onChange={(e) => handleEditChange('totalQty', Number(e.target.value))}
+                             />
+                         </Form.Group>
+                         <Form.Group className="mb-3">
+                             <Form.Label>Available Quantity</Form.Label>
+                             <Form.Control
+                                 type="number"
+                                 value={editingBook.avilableQty}
+                                 onChange={(e) => handleEditChange('avilableQty', Number(e.target.value))}
+                             />
+                         </Form.Group>
+                     </Form>
+                 )}
+             </Modal.Body>
+             <Modal.Footer>
+                 <Button variant="secondary" onClick={handleEditCancel}>
+                     Cancel
+                 </Button>
+                 <Button variant="primary" onClick={handleEditSave}>
+                     Save Changes
+                 </Button>
+             </Modal.Footer>
+         </Modal>
 
          {/* Delete Confirmation Modal */}
          <Modal show={showDeleteModal} onHide={handleDeleteCancel}>
@@ -224,6 +285,42 @@ export const Book = ()=>{
                  </Button>
                  <Button variant="danger" onClick={handleDeleteConfirm}>
                      Delete
+                 </Button>
+             </Modal.Footer>
+         </Modal>
+
+         {/* Confirmation Modal */}
+         <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+             <Modal.Header closeButton>
+                 <Modal.Title>Confirm Changes</Modal.Title>
+             </Modal.Header>
+             <Modal.Body>
+                 Are you sure you want to save these changes?
+             </Modal.Body>
+             <Modal.Footer>
+                 <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+                     Cancel
+                 </Button>
+                 <Button variant="primary" onClick={handleConfirmEdit}>
+                     Save Changes
+                 </Button>
+             </Modal.Footer>
+         </Modal>
+
+         {/* Alert Modal */}
+         <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+             <Modal.Header closeButton className={alertType === 'success' ? 'alert-success' : 'alert-danger'}>
+                 <Modal.Title>{alertType === 'success' ? 'Success' : 'Error'}</Modal.Title>
+             </Modal.Header>
+             <Modal.Body>
+                 {alertMessage}
+             </Modal.Body>
+             <Modal.Footer>
+                 <Button 
+                     variant={alertType === 'success' ? 'success' : 'danger'} 
+                     onClick={() => setShowAlertModal(false)}
+                 >
+                     Close
                  </Button>
              </Modal.Footer>
          </Modal>
