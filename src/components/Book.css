@@ -1,0 +1,302 @@
+h1{
+    text-align: center;
+}
+
+.table {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+  background-color: #3d027c;
+  color: white;
+}
+
+th {
+  font-weight: 500;
+  text-align: center;
+}
+
+td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+}
+
+.table-container {
+  margin: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table {
+  background-color: white;
+  width: 100%;
+}
+
+thead {
+  background-color: #3d027c;
+  color: white;
+}
+
+th {
+  padding: 15px !important;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+td {
+  padding: 12px !important;
+  vertical-align: middle;
+  text-align: center;
+}
+
+tbody tr:hover {
+  background-color: #f8f9fa !important;
+  transition: background-color 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-container {
+    margin: 1rem;
+    overflow-x: auto;
+  }
+}
+
+/* Container styling */
+.book-container {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/* Table styling */
+.book-table {
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Header styling */
+.book-table thead tr {
+    background-color: #3d027c !important;
+}
+
+.book-table thead th {
+    color: white !important;
+    font-weight: 500;
+    padding: 15px !important;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    border-bottom: none !important;
+}
+
+/* Body styling */
+.book-table tbody td {
+    padding: 12px 8px !important;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Text alignments */
+.book-table tbody td:nth-child(2),  /* Title */
+.book-table tbody td:nth-child(3),  /* Publisher */
+.book-table tbody td:nth-child(5) { /* Author */
+    text-align: left;
+}
+
+.book-table tbody td:nth-child(7) { /* Price */
+    text-align: right;
+}
+
+/* Action buttons */
+.action-buttons {
+    white-space: nowrap;
+}
+
+.action-buttons button {
+    padding: 4px 12px;
+    margin: 0 3px;
+}
+
+/* Add New Book button */
+.add-book-btn {
+    padding: 8px 20px;
+    margin-bottom: 20px;
+}
+
+/* Hover effect */
+.book-table tbody tr:hover {
+    background-color: #f8f9fa !important;
+    transition: background-color 0.2s ease;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .book-table {
+        font-size: 0.9rem;
+    }
+    
+    .action-buttons button {
+        padding: 4px 8px;
+    }
+}
+
+/* Keep existing styles and add/update these */
+
+/* Action buttons */
+.edit-btn, .delete-btn {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    margin-right: 12px;
+    border-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.edit-btn:hover {
+    background-color: #0d6efd;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .edit-btn, .delete-btn {
+        padding: 3px 8px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Table container */
+.table-wrapper {
+    position: relative;
+    max-height: calc(100vh - 200px);
+    overflow: auto;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styles */
+.table {
+    position: relative;
+    background-color: white;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/* Fixed header */
+.table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table thead tr {
+    background-color: #3d027c;
+}
+
+.table thead th {
+    color: white !important;
+    font-weight: 500;
+    text-align: center;
+    padding: 15px !important;
+    white-space: nowrap;
+    border-bottom: 2px solid #2c0159;
+    background-color: #3d027c;
+}
+
+/* Table body */
+.table tbody td {
+    padding: 12px 8px !important;
+    vertical-align: middle;
+    text-align: center;
+    background-color: white;
+}
+
+/* Column alignments */
+.table tbody td:nth-child(2),  /* Title */
+.table tbody td:nth-child(3),  /* Publisher */
+.table tbody td:nth-child(5) { /* Author */
+    text-align: left;
+}
+
+.table tbody td:nth-child(7) { /* Price */
+    text-align: right;
+}
+
+/* Hover effect */
+.table tbody tr:hover {
+    background-color: #f8f9fa !important;
+    transition: background-color 0.2s ease;
+}
+
+/* Action buttons */
+.edit-btn, .delete-btn {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    margin-right: 12px;
+    border-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.edit-btn:hover {
+    background-color: #0d6efd;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    .edit-btn, .delete-btn {
+        padding: 3px 8px;
+        font-size: 0.8rem;
+    }
+}

@@ -1,0 +1,69 @@
+.custom-navbar {
+  background: rgba(126, 32, 48, 0.98);
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #ff6b6b, #ffb347);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.nav-link {
+  color: #ffb347 !important;
+  font-weight: 500;
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem !important;
+  position: relative;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(45deg, #ff6b6b, #ffb347);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 80%;
+  font-size: 1.2rem;
+}
+
+.nav-link:hover {
+  color: #ff6b6b !important;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 991px) {
+  .nav-link {
+    padding: 1rem !important;
+  }
+  
+  .nav-link::after {
+    display: none;
+  }
+}
+
+/* Add some padding to the body to prevent content from hiding under fixed navbar */
+body {
+  padding-top: 76px;
+} 
