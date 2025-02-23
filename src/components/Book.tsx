@@ -5,6 +5,7 @@ import { GetBook, DeleteBook, UpdateBook } from '../service/book/Book';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import { Background } from './Background';
 
 export const Book = ()=>{
      const tHeadings:string [] = [
@@ -57,6 +58,7 @@ export const Book = ()=>{
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [alertType, setAlertType] = useState<'success' | 'error'>('success');
+    const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
 
     const handleEditClick = (book: Book) => {
         setEditingBook({ ...book });
@@ -95,16 +97,15 @@ export const Book = ()=>{
                 const isDeleted = await DeleteBook(bookToDelete);
                 if (isDeleted) {
                     setBooks(prevBooks => prevBooks.filter(book => book.bookId !== bookToDelete));
-                } else {
-                    alert('Could not delete the book. Please try again.');
+                    setShowDeleteModal(false);
+                    setBookToDelete(null);
+                    setShowDeleteSuccessModal(true);
                 }
             } catch (err) {
                 console.error("Delete failed:", err);
                 alert('Failed to delete book. Please try again.');
             }
         }
-        setShowDeleteModal(false);
-        setBookToDelete(null);
     };
 
     const handleDeleteCancel = () => {
@@ -139,6 +140,7 @@ export const Book = ()=>{
 
      return(
          <>
+         <Background />
          <div className="table-wrapper">
             <Table striped bordered hover>
                 <thead>
@@ -290,7 +292,12 @@ export const Book = ()=>{
          </Modal>
 
          {/* Confirmation Modal */}
-         <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+         <Modal 
+             show={showConfirmModal} 
+             onHide={() => setShowConfirmModal(false)}
+             className="confirm-modal"
+             centered
+         >
              <Modal.Header closeButton>
                  <Modal.Title>Confirm Changes</Modal.Title>
              </Modal.Header>
@@ -313,12 +320,42 @@ export const Book = ()=>{
                  <Modal.Title>{alertType === 'success' ? 'Success' : 'Error'}</Modal.Title>
              </Modal.Header>
              <Modal.Body>
-                 {alertMessage}
+                 {alertType === 'success' && (
+                     <div className="success-icon">
+                         <svg viewBox="0 0 24 24">
+                             <path d="M4.1 12.7L9 17.6 20.3 6.3" fill="none" stroke="currentColor" strokeWidth="2"/>
+                         </svg>
+                     </div>
+                 )}
+                 <p>{alertMessage}</p>
              </Modal.Body>
              <Modal.Footer>
                  <Button 
                      variant={alertType === 'success' ? 'success' : 'danger'} 
                      onClick={() => setShowAlertModal(false)}
+                 >
+                     Close
+                 </Button>
+             </Modal.Footer>
+         </Modal>
+
+         {/* Delete Success Modal */}
+         <Modal show={showDeleteSuccessModal} onHide={() => setShowDeleteSuccessModal(false)}>
+             <Modal.Header closeButton className="alert-danger">
+                 <Modal.Title>Success</Modal.Title>
+             </Modal.Header>
+             <Modal.Body>
+                 <div className="success-icon delete-success">
+                     <svg viewBox="0 0 24 24">
+                         <path d="M4.1 12.7L9 17.6 20.3 6.3" fill="none" stroke="currentColor" strokeWidth="2"/>
+                     </svg>
+                 </div>
+                 <p>Book deleted successfully!</p>
+             </Modal.Body>
+             <Modal.Footer>
+                 <Button 
+                     variant="danger" 
+                     onClick={() => setShowDeleteSuccessModal(false)}
                  >
                      Close
                  </Button>
